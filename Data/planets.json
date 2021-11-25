@@ -1,0 +1,63 @@
+{
+  "Planetas": [
+    "Tierra",
+    "Venus",
+    "Jupiter",
+    "Mercurio",
+    "Marte",
+    "Saturno",
+    "Urano",
+    "Neptuno",
+    "Pluton"
+  ],
+  "Rutas": [
+    {
+      "Origen": "Tierra",
+      "Destino": "Venus",
+      "Peso": 10,
+      "Obstruido": false
+    },
+    {
+      "Origen": "Tierra",
+      "Destino": "Saturno",
+      "Peso": 35,
+      "Obstruido": false
+    },
+    {
+      "Origen": "Saturno",
+      "Destino": "Marte",
+      "Peso": 20,
+      "Obstruido": false
+    },
+    {
+      "Origen": "Saturno",
+      "Destino": "Venus",
+      "Peso": 40,
+      "Obstruido": false
+    },
+    {
+      "Origen": "Venus",
+      "Destino": "Jupiter",
+      "Peso": 18,
+      "Obstruido": false
+    },
+    {
+      "Origen": "Jupiter",
+      "Destino": "Mercurio",
+      "Peso": 10,
+      "Obstruido": false
+    },
+    {
+      "Origen": "Saturno",
+      "Destino": "Urano",
+      "Peso": 12,
+      "Obstruido": false
+    },
+    {
+      "Origen": "Mercurio",
+      "Destino": "Pluton",
+      "Peso": 60,
+      "Obstruido": false
+    }
+  ]
+}
