@@ -6,10 +6,11 @@ import json
 
 class Grafo():
     
-    def __init__(self):
+    def __init__(self, dirigido):
         self.listaNodos = []
         self.listaAristas = []
         self.listaVisitados = []
+        self.dirigido = dirigido
         
     #Nodos###################################################################
     def obtenerNodo(self, dato):
@@ -93,8 +94,11 @@ class Grafo():
             
     def eliminarAdyacente(self, dato, adyacente):
         nodo = self.obtenerNodo(dato)
+        nodo2 = self.obtenerNodo(adyacente)
         if nodo:
             nodo.listaAdyacentes.remove(adyacente)
+        if nodo2:
+            nodo2.listaAdyacentes.remove(dato)
             
     #Aristas##########################################################
     def eliminarArista(self, origen, destino):
@@ -107,6 +111,9 @@ class Grafo():
         for arista in self.listaAristas:
             if arista.origen == origen and arista.destino == destino:
                 return arista
+            if not self.dirigido:
+                if arista.origen == destino and arista.destino == origen:
+                    return arista
         return None
     
     def obtenerAristasOrigen(self, origen):
@@ -166,6 +173,8 @@ class Grafo():
             if not self.verificarA(origen, destino):
                 self.listaAristas.append(Arista(peso, origen, destino, obstruido))
                 nodoOrigen.listaAdyacentes.append(nodoDestino.dato)
+                if not self.dirigido:
+                    nodoDestino.listaAdyacentes.append(nodoOrigen.dato)
         
     def verificarA(self, origen, destino):
         for i in range(len(self.listaAristas)):
@@ -220,91 +229,82 @@ class Grafo():
             self.imprimirA()
             
     def boruvka(self):
-        copiaNodos = copy(self.listaNodos)  # copia de los nodos
-        copiaAristas = copy(self.listaAristas)  # copia de las aristas
+        copiaNodos = copy(self.listaNodos)
+        copiaAristas = copy(self.listaAristas)
         aristasBoruvka = []
-        listaConjuntos = []
+        visitados = []#Arreglo de conjuntos
         bandera = True
         cantidad = 0
-        while (cantidad > 1 or bandera):
+        interacciones = 0
+        while cantidad > 1 or bandera:
+            interacciones += 1
+            if interacciones == 5:
+                break
             for nodo in copiaNodos:
-                self.operacionesConjuntosB(nodo, listaConjuntos, aristasBoruvka, copiaAristas)
+                self.boruvkaNodo(nodo, copiaAristas, aristasBoruvka, visitados)
             bandera = False
-            cantidad = self.cantidadConjuntos(listaConjuntos)
-        for dato in aristasBoruvka:
-            print("Origen: {0} destino: {1} peso: {2}".format(dato.getOrigen(), dato.getDestino(), dato.getPeso()))
-
-    def cantidadConjuntos(self, ListaConjuntos):
-        cantidad = 0
-        for conjunto in ListaConjuntos:
-            if len(conjunto) > 0:
-                cantidad = cantidad + 1
-        return cantidad
-
-    def operacionesConjuntosB(self, nodo, listaConjuntos, aristasBoruvka, copiaAristas):
-        encontrado1 = -1
-        encontrado2 = -1
-        menor = self.buscarMenor(nodo, copiaAristas)
-
-        if menor:  # si no esta vacio
-            if not listaConjuntos:  # si esta vacia
-                listaConjuntos.append({menor.origen, menor.destino})
-                aristasBoruvka.append(menor)
-            else:
-                for i in range(len(listaConjuntos)):
-                    if (menor.origen in listaConjuntos[i]) and (menor.destino in listaConjuntos[i]):
-                        return False;  ##Camino cicliclo
-
-                for i in range(len(listaConjuntos)):
-                    if menor.origen in listaConjuntos[i]:
-                        encontrado1 = i
-                    if menor.destino in listaConjuntos[i]:
-                        encontrado2 = i
-
-                if encontrado1 != -1 and encontrado2 != -1:
-                    if encontrado1 != encontrado2:  # si pertenecen a dos conjuntos diferentes
-                        # debo unir los dos conjuntos
-                        listaConjuntos[encontrado1].update(listaConjuntos[encontrado2])
-                        listaConjuntos[encontrado2].clear();  # elimino el conjunto
-                        aristasBoruvka.append(menor)
-
-                if encontrado1 != -1 and encontrado2 == -1:  # si va unido por un conjunto
-                    listaConjuntos[encontrado1].update(menor.origen)
-                    listaConjuntos[encontrado1].update(menor.destino)
-                    aristasBoruvka.append(menor)
-
-                if encontrado1 == -1 and encontrado2 != -1:  # si va unido por un conjunto
-                    listaConjuntos[encontrado2].update(menor.origen)
-                    listaConjuntos[encontrado2].update(menor.destino)
-                    aristasBoruvka.append(menor)
-
-                if encontrado1 == -1 and encontrado2 == -1:  # si no existe en los conjuntos
-                    listaConjuntos.append({menor.origen, menor.destino})
-                    aristasBoruvka.append(menor)
-
-    def buscarMenor(self, nodo, copiaAristas):
-        temp = []
-        for adyacencia in nodo.listaAdyacentes:
+            cantidad = len(visitados)
+            for i in range(len(visitados)):
+                print(f"Visitados en pos {i} -> {visitados[i]}")
+            print(f"Tamaño actual {cantidad}")
+        for i in range(len(aristasBoruvka)):
+            print(f"Arista en posición {i}: Origen->{aristasBoruvka[i].origen} -- Destino->{aristasBoruvka[i].destino}")
+                
+    def boruvkaNodo(self, nodo, copiaAristas, aristasBoruvka, visitados):
+        aristas = []
+        for n in nodo.listaAdyacentes:
             for arista in copiaAristas:
-                # busco las aristas de esa lista de adyacencia
-                if arista.origen == nodo.dato and arista.destino == adyacencia:
-                    temp.append(arista)
-        if temp:  # si no esta vacia
-            # una vez obtenga todas las aristas, saco la menor
-            self.ordenar(temp)  # ordeno las aristas
-            # elimin ese destino porque ya lo voy a visitar
-            # print("{0}-{1}:{2}".format(temp[0].getOrigen(), temp[0].getDestino(), temp[0].getPeso()))
-            nodo.listaAdyacentes.remove(temp[0].destino)
-            return temp[0]  # es la menor
-        return None  # es la menor
-
-    def ordenar(self, aristas):
-        for i in range(len(aristas)):
-            for j in range(len(aristas)):
-                if aristas[i].peso < aristas[j].peso:  # menor a mayor
-                    temp = aristas[i]
-                    aristas[i] = aristas[j]
-                    aristas[j] = temp
+                if arista.origen == nodo.dato and arista.destino == n:
+                    aristas.append(arista)
+                elif not self.dirigido and arista.origen == n and arista.destino == nodo.dato:
+                    aristas.append(arista)
+        for arista in aristas:
+            if arista in aristasBoruvka:
+                aristas.remove(arista)
+                print(f"Arista {arista.origen} -- {arista.destino} ya presente")
+        menor = self.aristaMenor(aristas)
+        if menor:
+            nodo1 = menor.origen
+            nodo2 = menor.destino
+            pos1 = -1
+            pos2 = -1
+            for i in range(len(visitados)):
+                if nodo1 in visitados[i]:
+                    pos1 = i
+                if nodo2 in visitados[i]:
+                    pos2 = i
+            if pos1 != -1 and pos2 != -1:
+                if pos1 == pos2:
+                    print(f"Arista {nodo1} -- {nodo2} encontrada en {pos1}")
+                    return
+                indice = pos1 if pos1 < pos2 else pos2
+                porBorrar = pos1 if pos1 >= pos2 else pos2
+                visitados[indice] = visitados[indice] + visitados[porBorrar]
+                del visitados[porBorrar]
+                aristasBoruvka.append(arista)
+                print(len(aristasBoruvka))
+                return
+            if pos1 == -1 and pos2 == -1:
+                aristasBoruvka.append(arista)
+                visitados.append([nodo1, nodo2])
+                print(len(aristasBoruvka))
+                return
+            aristasBoruvka.append(arista)
+            print(len(aristasBoruvka))
+            if pos1 != -1:
+                visitados[pos1].append(nodo2)
+            else:
+                visitados[pos2].append(nodo1)
+        return
+                    
+    def aristaMenor(self, listaAristas):
+        menor = None
+        if listaAristas:
+            menor = listaAristas[0]
+            for arista in listaAristas:
+                if arista.peso < menor.peso:
+                    menor = arista
+        return menor
 
     def kruskal(self):
         copiaAristas=copy(self.listaAristas)#copia de las aristas
@@ -361,3 +361,77 @@ class Grafo():
             if encontrado1 == -1 and encontrado2 == -1:# si no existe en los conjuntos
                 listaConjuntos.append({menor.origen, menor.destino})
                 AristasKruskal.append(menor)
+                
+    def caminoMasCorto(self, origen, destino):
+        VerticesAux = []
+        VerticesD = []
+        caminos = self.dijkstra(origen, VerticesAux)
+        cont = 0
+        for i in caminos:
+            cont = cont + 1
+
+        self.rutas(VerticesD, VerticesAux, destino, origen)
+        print("El camino más corto de: " + origen + " a " + destino + " es: ")
+        print(VerticesD)
+
+    def rutas(self, VerticesD, VerticesAux, destino, origen):
+        verticeDestino = self.obtenerNodo(destino)
+        indice = self.listaNodos.index(verticeDestino)
+        if VerticesAux[indice] is None:
+            print("No hay camino entre: ", (origen, destino))
+            return
+        aux = destino
+        while aux is not origen:
+            verticeDestino = self.obtenerNodo(aux)
+            indice = self.listaNodos.index(verticeDestino)
+            VerticesD.insert(0, aux)
+            aux = VerticesAux[indice]
+        VerticesD.insert(0, aux)
+
+    def dijkstra(self, origen, VerticesAux):
+        marcados = []  # la lista de los que ya hemos visitado
+        caminos = []  # la lista final
+        # iniciar los valores en infinito
+        for v in self.listaNodos:
+            caminos.append(float("inf"))
+            marcados.append(False)
+            VerticesAux.append(None)
+            if v.dato is origen:
+                caminos[self.listaNodos.index(v)] = 0
+                VerticesAux[self.listaNodos.index(v)] = v.dato
+        while not self.todosMarcados(marcados):
+            aux = self.menorNoMarcado(caminos, marcados)  # obtuve el menor no marcado
+            if aux is None:
+                break
+            indice = self.listaNodos.index(aux)  # indice del menor no marcado
+            marcados[indice] = True  # marco como visitado
+            valorActual = caminos[indice]
+            for vAdya in aux.listaAdyacentes:
+                indiceNuevo = self.listaNodos.index(self.obtenerNodo(vAdya))
+                arista = self.obtenerArista(vAdya, aux.dato)
+                if caminos[indiceNuevo] > valorActual + arista.peso:
+                    caminos[indiceNuevo] = valorActual + arista.peso
+                    VerticesAux[indiceNuevo] = self.listaNodos[indice].dato
+        return caminos
+
+    def menorNoMarcado(self, caminos, marcados):
+        verticeMenor = None
+        caminosAux = sorted(caminos)
+        copiacaminos = copy(caminos)
+        bandera = True
+        contador = 0
+        while bandera:
+            menor = caminosAux[contador]
+            if marcados[copiacaminos.index(menor)] == False:
+                verticeMenor = self.listaNodos[copiacaminos.index(menor)]
+                bandera = False
+            else:
+                copiacaminos[copiacaminos.index(menor)] = "x"
+                contador = contador + 1
+        return verticeMenor
+
+    def todosMarcados(self, marcados):
+        for j in marcados:
+            if j is False:
+                return False
+        return True

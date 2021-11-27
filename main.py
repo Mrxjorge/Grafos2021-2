@@ -1,7 +1,7 @@
 from Grafo.Grafo import *
 import json
 
-grafo = Grafo()
+grafo = Grafo(False)
 # grafo.ingresarN("F")
 # grafo.ingresarN("A")
 # grafo.ingresarN("F")
@@ -26,3 +26,13 @@ grafo = Grafo()
 # print(f"El grado del nodo F es {gradoF}")
 # grafo.imrpimirAdyacencia("F")
 grafo.cargarGrafoJSON("./Data/planets.json")
+print(f"El grafo es {grafo.esConexo()} conexo")
+fuentes = grafo.buscarFuentes()
+print(fuentes)
+pozos = grafo.buscarPozos()
+print(pozos)
+grafo.boruvka()
+# print("--------------------------------------------")
+# grafo.kruskal()
+# print("--------------------------------------------")
+# grafo.caminoMasCorto("Tierra", "Saturno")

@@ -58,6 +58,12 @@
       "Destino": "Pluton",
       "Peso": 60,
       "Obstruido": false
+    },
+    {
+      "Origen": "Mercurio",
+      "Destino": "Neptuno",
+      "Peso": 35,
+      "Obstruido": false
     }
   ]
 }
