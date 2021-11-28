@@ -41,4 +41,18 @@ grafo.cargarGrafoJSON("./Data/planets.json")
 # print("--------------------------------------------")
 # grafo.kruskal()
 # print("--------------------------------------------")
-grafo.caminoMasCorto("Tierra", "Neptuno")
+# grafo.caminoMasCorto("Marte", "Pluton")
+
+# visitados = grafo.amplitud("Saturno")
+# nodos = grafo.obtenerNodos()
+# setV = set(visitados)
+# setN = set(nodos)
+# print(f"Visitados: {setV}")
+# print(f"Nodos: {setN}")
+# print(f"Diferencia: {setN.difference(setV)}")
+
+desconectados = []
+for nodo in grafo.listaNodos:
+    if not grafo.estaConectado(nodo.dato):
+        desconectados.append(nodo.dato)
+print(desconectados)

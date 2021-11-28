@@ -18,6 +18,12 @@ class Grafo():
             if nodo.dato == dato:
                 return nodo
         return None
+    
+    def obtenerNodos(self):
+        nodos = []
+        for nodo in self.listaNodos:
+            nodos.append(nodo.dato)
+        return nodos
             
     def ingresarN(self,dato):
         if not self.verificarN(dato):
@@ -72,8 +78,9 @@ class Grafo():
         nodo = self.obtenerNodo(dato)
         if nodo:
             for arista in self.listaAristas:
-                if arista.origen == dato or arista.destino == dato:
-                    return True
+                if not arista.obstruido:
+                    if arista.origen == dato or arista.destino == dato:
+                        return True
         return False
     
     def gradoNodo(self, dato):
@@ -136,8 +143,9 @@ class Grafo():
         arista = self.obtenerArista(origen, destino)
         if arista:
             peso = arista.peso
+            obstruido = arista.obstruido
             self.eliminarArista(origen, destino)
-            self.ingresarA(destino, origen, peso)
+            self.ingresarA(destino, origen, peso, obstruido)
     
     def cambiarOrigen(self, arista, nuevoOrigen):
         aristas = self.obtenerAristasDestino(arista.destino)
@@ -145,7 +153,7 @@ class Grafo():
             if a.origen == nuevoOrigen:
                 return False
         self.eliminarArista(arista.origen, arista.destino)
-        self.ingresarA(nuevoOrigen, arista.destino, arista.peso)
+        self.ingresarA(nuevoOrigen, arista.destino, arista.peso, arista.obstruido)
         return True
     
     def cambiarDestino(self, arista, nuevoDestino):
@@ -154,7 +162,7 @@ class Grafo():
             if a.destino == nuevoDestino:
                 return False
         self.eliminarArista(arista.origen, arista.destino)
-        self.ingresarA(arista.origen, nuevoDestino, arista.peso)
+        self.ingresarA(arista.origen, nuevoDestino, arista.peso, arista.obstruido)
         return True
     
     def controlarObstruccionArista(self, origen, destino, control):
@@ -392,7 +400,6 @@ class Grafo():
         caminos = []  # la lista final
         # iniciar los valores en infinito
         for v in self.listaNodos:
-            print("Ciclo 3")
             caminos.append(float("inf"))
             marcados.append(False)
             VerticesAux.append(None)
@@ -400,21 +407,18 @@ class Grafo():
                 caminos[self.listaNodos.index(v)] = 0
                 VerticesAux[self.listaNodos.index(v)] = v.dato
         while not self.todosMarcados(marcados):
-            print("Ciclo 1")
             aux = self.menorNoMarcado(caminos, marcados)  # obtuve el menor no marcado
-            if not aux:
+            if aux is None:
                 break
             indice = self.listaNodos.index(aux)  # indice del menor no marcado
             marcados[indice] = True  # marco como visitado
             valorActual = caminos[indice]
             for vAdya in aux.listaAdyacentes:
                 indiceNuevo = self.listaNodos.index(self.obtenerNodo(vAdya))
-                arista = self.obtenerArista(vAdya, aux.dato)
-                if arista:
-                    if caminos[indiceNuevo] > valorActual + arista.peso:
-                        caminos[indiceNuevo] = valorActual + arista.peso
-                        VerticesAux[indiceNuevo] = self.listaNodos[indice].dato
-                        print("Ciclo 2")
+                arista = self.obtenerArista(aux.dato, vAdya)
+                if caminos[indiceNuevo] > valorActual + arista.peso:
+                    caminos[indiceNuevo] = valorActual + arista.peso
+                    VerticesAux[indiceNuevo] = self.listaNodos[indice].dato
         return caminos
 
     def menorNoMarcado(self, caminos, marcados):
