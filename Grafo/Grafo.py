@@ -379,7 +379,8 @@ class Grafo():
             print("No hay camino entre: ", (origen, destino))
             return
         aux = destino
-        while aux is not origen:
+        while aux != origen:
+            print("Ciclo 4")
             verticeDestino = self.obtenerNodo(aux)
             indice = self.listaNodos.index(verticeDestino)
             VerticesD.insert(0, aux)
@@ -391,15 +392,17 @@ class Grafo():
         caminos = []  # la lista final
         # iniciar los valores en infinito
         for v in self.listaNodos:
+            print("Ciclo 3")
             caminos.append(float("inf"))
             marcados.append(False)
             VerticesAux.append(None)
-            if v.dato is origen:
+            if v.dato == origen:
                 caminos[self.listaNodos.index(v)] = 0
                 VerticesAux[self.listaNodos.index(v)] = v.dato
         while not self.todosMarcados(marcados):
+            print("Ciclo 1")
             aux = self.menorNoMarcado(caminos, marcados)  # obtuve el menor no marcado
-            if aux is None:
+            if not aux:
                 break
             indice = self.listaNodos.index(aux)  # indice del menor no marcado
             marcados[indice] = True  # marco como visitado
@@ -411,6 +414,7 @@ class Grafo():
                     if caminos[indiceNuevo] > valorActual + arista.peso:
                         caminos[indiceNuevo] = valorActual + arista.peso
                         VerticesAux[indiceNuevo] = self.listaNodos[indice].dato
+                        print("Ciclo 2")
         return caminos
 
     def menorNoMarcado(self, caminos, marcados):
