@@ -30,6 +30,8 @@ class Grafo():
         return False
     
     def imprimirN(self):
+        print("Nodos en el sistema---------------------------")
+        print(f"Número de nodos: {len(self.listaNodos)}")
         for i in range(len(self.listaNodos)):
             print("Nodo: {0}".format(self.listaNodos[i].dato))
             
@@ -183,6 +185,8 @@ class Grafo():
         return False
     
     def imprimirA(self):
+        print("Aristas en el sistema---------------------------")
+        print(f"Número de aristas: {len(self.listaAristas)}")
         for i in range(len(self.listaAristas)):
             arista = self.listaAristas[i]
             print(f"Arista: origen->{arista.origen} -- destino->{arista.destino} -- peso->{arista.peso} -- obstruido->{arista.obstruido}")
@@ -218,15 +222,19 @@ class Grafo():
         return self.listaVisitados
     
     def cargarGrafoJSON(self, ruta):
-        with open(ruta) as JSON:
-            file = json.load(JSON)
+        with open(ruta) as inInfo:
+            file = json.load(inInfo)
             print(file)
             for planeta in file["Planetas"]:
+                print(f"Ingresando planeta {planeta}")
                 self.ingresarN(planeta)
-            self.imprimirN()
             for ruta in file["Rutas"]:
+                origen = ruta["Origen"]
+                destino = ruta["Destino"]
+                print(f"Ingresando ruta {origen} -- {destino}")
                 self.ingresarA(ruta["Origen"], ruta["Destino"], ruta["Peso"], ruta["Obstruido"])
-            self.imprimirA()
+        self.imprimirN()
+        self.imprimirA()
             
     def boruvka(self):
         copiaNodos = copy(self.listaNodos)
@@ -301,18 +309,23 @@ class Grafo():
                 if arista.peso < menor.peso:
                     menor = arista
         return menor
+    
+    def ordenar(self, aristas):
+        for i in range(len(aristas)):
+            for j in range(len(aristas)):
+                if aristas[i].peso < aristas[j].peso:
+                    temp = aristas[i]
+                    aristas[i] = aristas[j]
+                    aristas[j] = temp
 
     def kruskal(self):
         copiaAristas=copy(self.listaAristas)#copia de las aristas
         aristasKruskal=[]
         listaConjuntos=[]
-
         self.ordenar(copiaAristas)#ordeno las aristas
-
         for menor in copiaAristas:
             self.operacionesconjuntos(menor,listaConjuntos,aristasKruskal)
         #esta ordenada de mayor a menor
-
         #print("la lista de conjunto se redujo a : {0}".format(len(ListaConjuntos)))
         for dato in aristasKruskal:
             print("Origen: {0} destino: {1} peso: {2}".format(dato.origen, dato.destino, dato.peso))
@@ -320,22 +333,18 @@ class Grafo():
     def operacionesconjuntos(self, menor, listaConjuntos, AristasKruskal):
        encontrado1 =- 1
        encontrado2 =- 1
-
        if not listaConjuntos:#si esta vacia
             listaConjuntos.append({menor.origen, menor.destino})
             AristasKruskal.append(menor)
-
        else:
             for i in range(len(listaConjuntos)):
                 if  (menor.origen  in listaConjuntos[i]) and (menor.destino in listaConjuntos[i]):
                     return False;##Camino cicliclo
-
             for i in range(len(listaConjuntos)):
                 if menor.origen in listaConjuntos[i]:
                    encontrado1 = i
                 if menor.destino in listaConjuntos[i]:
                    encontrado2 = i
-
             if encontrado1 != -1 and encontrado2 != -1:
                 if encontrado1 != encontrado2:#si pertenecen a dos conjuntos diferentes
                     #debo unir los dos conjuntos
@@ -343,17 +352,14 @@ class Grafo():
                     listaConjuntos[encontrado1].update(listaConjuntos[encontrado2])#uno los dos conjuntos
                     listaConjuntos[encontrado2].clear();#elimino el conjunto
                     AristasKruskal.append(menor)
-
             if encontrado1 != -1 and encontrado2 == -1:# si va unido por un conjunto
                 #ListaConjuntos[encontrado1].add(menor.getOrigen())
                 listaConjuntos[encontrado1].add(menor.destino)
                 AristasKruskal.append(menor)
-
             if encontrado1 == -1 and encontrado2 != -1:# si va unido por un conjunto
                 listaConjuntos[encontrado2].add(menor.origen)
                 #ListaConjuntos[encontrado2].add(menor.getDestino())
                 AristasKruskal.append(menor)
-
             if encontrado1 == -1 and encontrado2 == -1:# si no existe en los conjuntos
                 listaConjuntos.append({menor.origen, menor.destino})
                 AristasKruskal.append(menor)
@@ -362,10 +368,6 @@ class Grafo():
         VerticesAux = []
         VerticesD = []
         caminos = self.dijkstra(origen, VerticesAux)
-        cont = 0
-        for i in caminos:
-            cont = cont + 1
-
         self.rutas(VerticesD, VerticesAux, destino, origen)
         print("El camino más corto de: " + origen + " a " + destino + " es: ")
         print(VerticesD)
@@ -405,9 +407,10 @@ class Grafo():
             for vAdya in aux.listaAdyacentes:
                 indiceNuevo = self.listaNodos.index(self.obtenerNodo(vAdya))
                 arista = self.obtenerArista(vAdya, aux.dato)
-                if caminos[indiceNuevo] > valorActual + arista.peso:
-                    caminos[indiceNuevo] = valorActual + arista.peso
-                    VerticesAux[indiceNuevo] = self.listaNodos[indice].dato
+                if arista:
+                    if caminos[indiceNuevo] > valorActual + arista.peso:
+                        caminos[indiceNuevo] = valorActual + arista.peso
+                        VerticesAux[indiceNuevo] = self.listaNodos[indice].dato
         return caminos
 
     def menorNoMarcado(self, caminos, marcados):
@@ -428,6 +431,6 @@ class Grafo():
 
     def todosMarcados(self, marcados):
         for j in marcados:
-            if j is False:
+            if not j:
                 return False
         return True
