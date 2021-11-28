@@ -1,7 +1,7 @@
 from Grafo.Grafo import *
 import json
 
-grafo = Grafo(False)
+grafo = Grafo(True)
 # grafo.ingresarN("F")
 # grafo.ingresarN("A")
 # grafo.ingresarN("F")

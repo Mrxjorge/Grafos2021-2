@@ -31,7 +31,7 @@ class Grafo():
     
     def imprimirN(self):
         for i in range(len(self.listaNodos)):
-            print("vertice: {0}".format(self.listaNodos[i].dato))
+            print("Nodo: {0}".format(self.listaNodos[i].dato))
             
     def imrpimirAdyacencia(self, dato):
         nodo = self.obtenerNodo(dato)
@@ -235,18 +235,11 @@ class Grafo():
         visitados = []#Arreglo de conjuntos
         bandera = True
         cantidad = 0
-        interacciones = 0
         while cantidad > 1 or bandera:
-            interacciones += 1
-            if interacciones == 5:
-                break
             for nodo in copiaNodos:
                 self.boruvkaNodo(nodo, copiaAristas, aristasBoruvka, visitados)
             bandera = False
             cantidad = len(visitados)
-            for i in range(len(visitados)):
-                print(f"Visitados en pos {i} -> {visitados[i]}")
-            print(f"Tamaño actual {cantidad}")
         for i in range(len(aristasBoruvka)):
             print(f"Arista en posición {i}: Origen->{aristasBoruvka[i].origen} -- Destino->{aristasBoruvka[i].destino}")
                 
@@ -261,7 +254,7 @@ class Grafo():
         for arista in aristas:
             if arista in aristasBoruvka:
                 aristas.remove(arista)
-                print(f"Arista {arista.origen} -- {arista.destino} ya presente")
+                # print(f"Arista {arista.origen} -- {arista.destino} ya presente")
         menor = self.aristaMenor(aristas)
         if menor:
             nodo1 = menor.origen
@@ -275,22 +268,25 @@ class Grafo():
                     pos2 = i
             if pos1 != -1 and pos2 != -1:
                 if pos1 == pos2:
-                    print(f"Arista {nodo1} -- {nodo2} encontrada en {pos1}")
+                    # print(f"Arista {nodo1} -- {nodo2} encontrada en {pos1}")
                     return
                 indice = pos1 if pos1 < pos2 else pos2
                 porBorrar = pos1 if pos1 >= pos2 else pos2
                 visitados[indice] = visitados[indice] + visitados[porBorrar]
                 del visitados[porBorrar]
-                aristasBoruvka.append(arista)
-                print(len(aristasBoruvka))
+                aristasBoruvka.append(menor)
+                # for i in range(len(aristasBoruvka)):
+                #     print(f"Arista repetida en posición {i}: Origen->{aristasBoruvka[i].origen} -- Destino->{aristasBoruvka[i].destino}")
                 return
             if pos1 == -1 and pos2 == -1:
-                aristasBoruvka.append(arista)
+                aristasBoruvka.append(menor)
                 visitados.append([nodo1, nodo2])
-                print(len(aristasBoruvka))
+                # for i in range(len(aristasBoruvka)):
+                #     print(f"Arista nueva en posición {i}: Origen->{aristasBoruvka[i].origen} -- Destino->{aristasBoruvka[i].destino}")
                 return
-            aristasBoruvka.append(arista)
-            print(len(aristasBoruvka))
+            aristasBoruvka.append(menor)
+            # for i in range(len(aristasBoruvka)):
+            #     print(f"Arista con un dato repetido en posición {i}: Origen->{aristasBoruvka[i].origen} -- Destino->{aristasBoruvka[i].destino}")
             if pos1 != -1:
                 visitados[pos1].append(nodo2)
             else:
