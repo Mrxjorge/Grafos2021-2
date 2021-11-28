@@ -12,6 +12,14 @@ class Grafo():
         self.listaVisitados = []
         self.dirigido = dirigido
         
+    def clear(self):
+        self.listaNodos = []
+        self.listaAristas = []
+        self.listaVisitados = []
+        
+    def loadDefault(self):
+        self.cargarGrafoJSON("./Data/planets.json")
+        
     #Nodos###################################################################
     def obtenerNodo(self, dato):
         for nodo in self.listaNodos:
@@ -24,10 +32,24 @@ class Grafo():
         for nodo in self.listaNodos:
             nodos.append(nodo.dato)
         return nodos
+    
+    def eliminarNodo(self, dato):
+        nodo = self.obtenerNodo(dato)
+        if nodo:
+            for arista in self.listaAristas:
+                if dato == arista.origen or dato == arista.destino:
+                    self.listaAristas.remove(arista)
+            for n in self.listaNodos:
+                if dato in n.listaAdyacentes:
+                    n.listaAdyacentes.remove(dato)
+            return True
+        return False
             
     def ingresarN(self,dato):
         if not self.verificarN(dato):
             self.listaNodos.append(Nodo(dato))
+            return True
+        return False
         
     def verificarN(self,dato):
         for i in range (len(self.listaNodos)):
@@ -115,6 +137,8 @@ class Grafo():
         if arista:
             self.listaAristas.remove(arista)
             self.eliminarAdyacente(origen, destino)
+            return True
+        return False
             
     def obtenerArista(self, origen, destino):
         for arista in self.listaAristas:
@@ -185,6 +209,8 @@ class Grafo():
                 nodoOrigen.listaAdyacentes.append(nodoDestino.dato)
                 if not self.dirigido:
                     nodoDestino.listaAdyacentes.append(nodoOrigen.dato)
+                return True
+        return False
         
     def verificarA(self, origen, destino):
         for i in range(len(self.listaAristas)):
@@ -200,6 +226,12 @@ class Grafo():
             print(f"Arista: origen->{arista.origen} -- destino->{arista.destino} -- peso->{arista.peso} -- obstruido->{arista.obstruido}")
             
     #Grafo##########################################################################
+    def cambiarTipoGrafo(self, tipo):
+        if tipo != self.dirigido:
+            self.clear()
+            self.dirigido = tipo
+            self.loadDefault()
+    
     def amplitud(self, origen):
         visitadosA = []
         cola = deque()
@@ -232,17 +264,17 @@ class Grafo():
     def cargarGrafoJSON(self, ruta):
         with open(ruta) as inInfo:
             file = json.load(inInfo)
-            print(file)
+            # print(file)
             for planeta in file["Planetas"]:
-                print(f"Ingresando planeta {planeta}")
+                # print(f"Ingresando planeta {planeta}")
                 self.ingresarN(planeta)
             for ruta in file["Rutas"]:
                 origen = ruta["Origen"]
                 destino = ruta["Destino"]
-                print(f"Ingresando ruta {origen} -- {destino}")
+                # print(f"Ingresando ruta {origen} -- {destino}")
                 self.ingresarA(ruta["Origen"], ruta["Destino"], ruta["Peso"], ruta["Obstruido"])
-        self.imprimirN()
-        self.imprimirA()
+        # self.imprimirN()
+        # self.imprimirA()
             
     def boruvka(self):
         copiaNodos = copy(self.listaNodos)
@@ -376,24 +408,24 @@ class Grafo():
         VerticesAux = []
         VerticesD = []
         caminos = self.dijkstra(origen, VerticesAux)
-        self.rutas(VerticesD, VerticesAux, destino, origen)
-        print("El camino más corto de: " + origen + " a " + destino + " es: ")
-        print(VerticesD)
+        if self.rutas(VerticesD, VerticesAux, destino, origen):
+            print("El camino más corto de: " + origen + " a " + destino + " es: ")
+            print(VerticesD)
 
     def rutas(self, VerticesD, VerticesAux, destino, origen):
         verticeDestino = self.obtenerNodo(destino)
         indice = self.listaNodos.index(verticeDestino)
         if VerticesAux[indice] is None:
             print("No hay camino entre: ", (origen, destino))
-            return
+            return False
         aux = destino
         while aux != origen:
-            print("Ciclo 4")
             verticeDestino = self.obtenerNodo(aux)
             indice = self.listaNodos.index(verticeDestino)
             VerticesD.insert(0, aux)
             aux = VerticesAux[indice]
         VerticesD.insert(0, aux)
+        return True
 
     def dijkstra(self, origen, VerticesAux):
         marcados = []  # la lista de los que ya hemos visitado

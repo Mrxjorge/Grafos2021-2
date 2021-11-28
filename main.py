@@ -1,49 +1,97 @@
 from Grafo.Grafo import *
-import json
-
+    
 grafo = Grafo(False)
-# grafo.ingresarN("Tierra")
-# grafo.ingresarN("Venus")
-# grafo.ingresarN("Jupiter")
-# grafo.ingresarN("Mercurio")
-# grafo.ingresarN("Marte")
-# grafo.ingresarN("Saturno")
-# grafo.ingresarN("Urano")
-# grafo.ingresarN("Neptuno")
-# grafo.ingresarN("Pluton")
-# grafo.ingresarA("Tierra", "Venus",10)
-# grafo.ingresarA("Tierra", "Saturno",35)
-# grafo.ingresarA("Saturno", "Marte", 20)
-# grafo.ingresarA("Saturno", "Venus", 40)
-# grafo.ingresarA("Venus", "Jupiter", 18)
-# grafo.ingresarA("Saturno", "Urano", 12)
-# grafo.ingresarA("Jupiter", "Mercurio", 25)
-# grafo.ingresarA("Mercurio", "Pluton", 60)
-# grafo.ingresarA("Mercurio", "Neptuno", 35)
-# grafo.ingresarA("Saturno", "Mercurio", 20)
-# grafo.ingresarA("Jupiter", "Pluton", 30)
-# grafo.imprimirN()
-# grafo.imprimirA()
-# pozos = grafo.buscarPozos()
-# fuentes = grafo.buscarFuentes()
-# gradoF = grafo.gradoNodo("F")
-# print(pozos)
-# print(fuentes)
-# print(f"El grado del nodo F es {gradoF}")
-# grafo.imrpimirAdyacencia("F")
-grafo.cargarGrafoJSON("./Data/planets.json")
-option = input("Holaaaaaaaaaaa\n")
-print(option)
-# print(f"El grafo es {grafo.esConexo()} conexo")
-# fuentes = grafo.buscarFuentes()
-# print(fuentes)
-# pozos = grafo.buscarPozos()
-# print(pozos)
-# grafo.boruvka()
-# print("--------------------------------------------")
-# grafo.kruskal()
-# print("--------------------------------------------")
-# grafo.caminoMasCorto("Marte", "Pluton")
+grafo.loadDefault()
+print("Sistema planetario")
+option = -1
+while option != "99":
+    print("Escoja una opcion")
+    print("1. Ver planetas")
+    print("2. Ver rutas")
+    print("3. Agregar planeta")
+    print("4. Agregar ruta")
+    print("5. Eliminar planeta")
+    print("6. Eliminar ruta")
+    print("7. Modificar ruta")
+    print("8. Conocer si la Galaxia está fuertemente Conectada")
+    print("9. Conocer si hay planetas sin rutas salientes (pozos)")
+    print("10. Conocer las rutas que entran y salen de cada planeta")
+    print("11. Cambiar tipo de grafo")
+    option = input("Opcion a elegir: ")
+    if option == "1":
+        grafo.imprimirN()
+    if option == "2":
+        grafo.imprimirA()
+    if option == "3":
+        nombre = input("Diga el nombre del planeta a agregar:\n")
+        if grafo.ingresarN(nombre):
+            print(f"Planeta {nombre} agregado")
+        else:
+            print(f"Planeta {nombre} ya presente en el sistema")
+    if option == "4":
+        origen = input("Diga el origen de la ruta: ")
+        destino = input("Diga el destino de la ruta: ")
+        peso = input("Diga el peso de la ruta: ")
+        obstruido = input("La ruta está obstruida? 1: Sí -- 2: No")
+        if grafo.ingresarA(origen, destino, peso, obstruido == "1"):
+            print("Ruta creada")
+        else:
+            print("La ruta no pudo ser creada")
+    if option=="5":
+        print("Dijite el nombre del planeta a elimiar del sistema: ")
+        eliminar=input()
+        if grafo.eliminarNodo(eliminar):
+            print("Planeta eliminado")
+        else:
+            print("No se pudo eliminar el planeta")
+    if option=="6":
+        print("Para eliminar la ruta, digite el planeta origen y el planeta destino")
+        origen = input("Origen: ")
+        destino = input("Destino: ")
+        if grafo.eliminarArista(origen,destino):
+            print("Ruta eliminada")
+        else:
+            print("La ruta no pudo ser eliminada")
+    if option == "7":
+        print("De el origen y el destino de la ruta a modificar")
+        origen = input("Origen: ")
+        destino = input("Destino: ")
+        arista = grafo.obtenerArista(origen, destino)
+        if arista:
+            print(f"Arista a modificar: Origen->{arista.origen} -- Destino->{arista.destino} -- Peso->{arista.peso} -- Está obstruida->{arista.obstruido}")
+            print("Escoja la modificación a realizar")
+            mod = input("1. Origen -- 2. Destino -- 3. Peso -- 4. Obstrucción")
+            if mod == "1":
+                origen = input("Escoja un nuevo origen: ")
+                if grafo.cambiarOrigen(arista, origen):
+                    print("Origen actualizado")
+                else:
+                    print("No se pudo actualizar el origen")
+            if mod == "2":
+                destino = input("Escoja un nuevo destino: ")
+                if grafo.cambiarDestino(arista, destino):
+                    print("Destino actualizado")
+                else:
+                    print("No se pudo actualizar el destino")
+            if mod == "3":
+                arista.peso = input("Escoja un nuevo peso: ")
+                print("Peso actualizado")
+            if mod == "4":
+                obstruccion = input("Desea que la ruta se obstruya? 1. Sí -- 2. No")
+                arista.obstruido = obstruccion == 1
+    if option == "11":
+        reinicio = input("Esta acción reinicia el grafo a sus valores por defecto, continuar? 1. Sí -- 2. No")
+        if reinicio == "1":
+            tipo = input("Escoja el tipo de grafo nuevo: 1. Dirigido -- 2. No Dirigido")
+            nuevoTipo = tipo == "1"
+            if grafo.dirigido != nuevoTipo:
+                grafo.cambiarTipoGrafo(nuevoTipo)
+                print("Tipo de grafo actualizado")
+            else:
+                print("El grafo ya es del tipo seleccionado")
+        
+    print("------------------------------------------------------------------")
+
 
 # visitados = grafo.amplitud("Saturno")
 # nodos = grafo.obtenerNodos()
@@ -53,8 +101,8 @@ print(option)
 # print(f"Nodos: {setN}")
 # print(f"Diferencia: {setN.difference(setV)}")
 
-desconectados = []
-for nodo in grafo.listaNodos:
-    if not grafo.estaConectado(nodo.dato):
-        desconectados.append(nodo.dato)
-print(desconectados)
+# desconectados = []
+# for nodo in grafo.listaNodos:
+#     if not grafo.estaConectado(nodo.dato):
+#         desconectados.append(nodo.dato)
+# print(desconectados)
