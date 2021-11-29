@@ -1,6 +1,6 @@
 from Grafo.Grafo import *
     
-grafo = Grafo(False)
+grafo = Grafo(True)
 grafo.loadDefault()
 print("Sistema planetario")
 option = -1
@@ -79,6 +79,19 @@ while option != "99":
             if mod == "4":
                 obstruccion = input("Desea que la ruta se obstruya? 1. Sí -- 2. No")
                 arista.obstruido = obstruccion == 1
+    if option == "8":
+        print("")
+    if option == "9":
+        pozos = grafo.buscarPozos()
+        print(f"Los pozos presentes en el sistema son {pozos}")
+    if option == "10":
+        nombre = input("Diga el nombre del planeta a analizar: ")
+        planeta = grafo.obtenerNodo(nombre)
+        if planeta:
+            print(f"Las rutas de salida del planeta son: {planeta.listaAdyacentes}")
+            print(f"Las rutas de entrada al planeta son: {grafo.obtenerEntradas(nombre)}")
+        else:
+            print("Planeta no encontrado en el sistema")
     if option == "11":
         reinicio = input("Esta acción reinicia el grafo a sus valores por defecto, continuar? 1. Sí -- 2. No")
         if reinicio == "1":

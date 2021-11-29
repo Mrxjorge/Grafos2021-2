@@ -27,7 +27,7 @@
       "Origen": "Saturno",
       "Destino": "Marte",
       "Peso": 20,
-      "Obstruido": true
+      "Obstruido": false
     },
     {
       "Origen": "Saturno",
@@ -51,7 +51,7 @@
       "Origen": "Saturno",
       "Destino": "Urano",
       "Peso": 12,
-      "Obstruido": true
+      "Obstruido": false
     },
     {
       "Origen": "Mercurio",
@@ -63,7 +63,7 @@
       "Origen": "Mercurio",
       "Destino": "Neptuno",
       "Peso": 35,
-      "Obstruido": true
+      "Obstruido": false
     },
     {
       "Origen": "Saturno",

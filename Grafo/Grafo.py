@@ -131,6 +131,13 @@ class Grafo():
         if nodo2:
             nodo2.listaAdyacentes.remove(dato)
             
+    def obtenerEntradas(self, dato):
+        entradas = []
+        for arista in self.listaAristas:
+            if arista.destino == dato:
+                entradas.append(arista.origen)
+        return entradas
+            
     #Aristas##########################################################
     def eliminarArista(self, origen, destino):
         arista = self.obtenerArista(origen, destino)
