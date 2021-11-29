@@ -21,6 +21,7 @@ while option != "99":
     print("13. Recorridos por anchura y profundidad")
     print("14. Árbol de expansión mínima Kruskal y Boruvka")
     print("15. Recorrido de menor distancia de un planeta a otro")
+    print("16. Listar planetas actualmente no conectados al sistema")
     option = input("Opcion a elegir: ")
     if option == "1":#Ver planetas
         grafo.imprimirN()
@@ -84,7 +85,10 @@ while option != "99":
                 obstruccion = input("Desea que la ruta se obstruya? 1. Sí -- 2. No")
                 arista.obstruido = obstruccion == 1
     if option == "8":#Conocer si la Galaxia está fuertemente Conectada
-        print("")
+        if grafo.esConexo():
+            print("La galaxia es conexa")
+        else: 
+            print("La galaxia no es conexa")
     if option == "9":#Conocer si hay planetas sin rutas salientes (pozos)
         pozos = grafo.buscarPozos()
         print(f"Los pozos presentes en el sistema son {pozos}")
@@ -134,6 +138,12 @@ while option != "99":
         origen = input("Escoja el planeta para iniciar el recorrido: ")
         destino = input("Escoja el planeta para finalizar el recorrido: ")
         grafo.caminoMasCorto(origen, destino)
+    if option == "16":#Listar planetas actualmente no conectados al sistema
+        desconectados = []
+        for nodo in grafo.listaNodos:
+            if not grafo.estaConectado(nodo.dato):
+                desconectados.append(nodo.dato)
+        print(f"Los planetas no conectados al sistema son: {desconectados}")
             
     print("------------------------------------------------------------------")
 
@@ -145,9 +155,3 @@ while option != "99":
 # print(f"Visitados: {setV}")
 # print(f"Nodos: {setN}")
 # print(f"Diferencia: {setN.difference(setV)}")
-
-# desconectados = []
-# for nodo in grafo.listaNodos:
-#     if not grafo.estaConectado(nodo.dato):
-#         desconectados.append(nodo.dato)
-# print(desconectados)
