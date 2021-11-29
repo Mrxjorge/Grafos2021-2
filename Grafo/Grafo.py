@@ -177,6 +177,8 @@ class Grafo():
             obstruido = arista.obstruido
             self.eliminarArista(origen, destino)
             self.ingresarA(destino, origen, peso, obstruido)
+            return True
+        return False
     
     def cambiarOrigen(self, arista, nuevoOrigen):
         aristas = self.obtenerAristasDestino(arista.destino)
@@ -418,6 +420,8 @@ class Grafo():
         if self.rutas(VerticesD, VerticesAux, destino, origen):
             print("El camino más corto de: " + origen + " a " + destino + " es: ")
             print(VerticesD)
+        else:
+            print("El sistema no pudo encontrar un camino")
 
     def rutas(self, VerticesD, VerticesAux, destino, origen):
         verticeDestino = self.obtenerNodo(destino)
