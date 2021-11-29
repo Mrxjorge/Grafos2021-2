@@ -416,7 +416,7 @@ class Grafo():
     def caminoMasCorto(self, origen, destino):
         VerticesAux = []
         VerticesD = []
-        caminos = self.dijkstra(origen, VerticesAux)
+        self.dijkstra(origen, VerticesAux)
         if self.rutas(VerticesD, VerticesAux, destino, origen):
             print("El camino más corto de: " + origen + " a " + destino + " es: ")
             print(VerticesD)
