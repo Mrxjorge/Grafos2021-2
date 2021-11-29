@@ -36,15 +36,15 @@ while option != "99":
     if option == "4":#Agregar ruta
         origen = input("Diga el origen de la ruta: ")
         destino = input("Diga el destino de la ruta: ")
-        peso = input("Diga el peso de la ruta: ")
+        peso = int(input("Diga el peso de la ruta: "))
         obstruido = input("La ruta está obstruida? 1: Sí -- 2: No ")
         if grafo.ingresarA(origen, destino, peso, obstruido == "1"):
             print("Ruta creada")
         else:
             print("La ruta no pudo ser creada")
-    if option=="5":#Eliminar planeta
+    if option == "5":#Eliminar planeta
         print("Dijite el nombre del planeta a elimiar del sistema: ")
-        eliminar=input()
+        eliminar = input()
         if grafo.eliminarNodo(eliminar):
             print("Planeta eliminado")
         else:
@@ -79,11 +79,11 @@ while option != "99":
                 else:
                     print("No se pudo actualizar el destino")
             if mod == "3":
-                arista.peso = input("Escoja un nuevo peso: ")
+                arista.peso = int(input("Escoja un nuevo peso: "))
                 print("Peso actualizado")
             if mod == "4":
                 obstruccion = input("Desea que la ruta se obstruya? 1. Sí -- 2. No")
-                arista.obstruido = obstruccion == 1
+                arista.obstruido = obstruccion == "1"
     if option == "8":#Conocer si la Galaxia está fuertemente Conectada
         if grafo.esConexo():
             print("La galaxia es conexa")
