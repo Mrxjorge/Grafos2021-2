@@ -43,8 +43,7 @@ while option != "99":
         else:
             print("La ruta no pudo ser creada")
     if option == "5":#Eliminar planeta
-        print("Dijite el nombre del planeta a elimiar del sistema: ")
-        eliminar = input()
+        eliminar = input("Dijite el nombre del planeta a elimiar del sistema: ")
         if grafo.eliminarNodo(eliminar):
             print("Planeta eliminado")
         else:

@@ -42,6 +42,7 @@ class Grafo():
             for n in self.listaNodos:
                 if dato in n.listaAdyacentes:
                     n.listaAdyacentes.remove(dato)
+            self.listaNodos.remove(nodo)
             return True
         return False
             
