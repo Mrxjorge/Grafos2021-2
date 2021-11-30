@@ -126,9 +126,9 @@ class Grafo():
     def eliminarAdyacente(self, dato, adyacente):
         nodo = self.obtenerNodo(dato)
         nodo2 = self.obtenerNodo(adyacente)
-        if nodo:
+        if nodo and adyacente in nodo.listaAdyacentes:
             nodo.listaAdyacentes.remove(adyacente)
-        if nodo2:
+        if nodo2 and dato in nodo2.listaAdyacentes:
             nodo2.listaAdyacentes.remove(dato)
             
     def obtenerEntradas(self, dato):
